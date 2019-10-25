@@ -50,20 +50,19 @@ sudo apt update -y
 echo -e "\e[32;7m LAMP STACK INSTALL \e[0m"
 
 # ----------------------------- LAMP STACK ----------------------------- #
-sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
-sudo apt-get install apache2 -y
-sudo apt-get install php libapache2-mod-php -y
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common \
+    apache2 \
+    php \
+    libapache2-mod-php -y
 sudo echo "<?php phpinfo();" > $DIRETORIO_DOWNLOADS/info.php
 sudo mv $DIRETORIO_DOWNLOADS/info.php /var/www/html/info.php
 sudo systemctl restart apache2
 curl -X GET http://localhost/info.php
-sudo apt-get remove docker docker-engine docker.io -y
-sudo apt install docker.io
-sudo systemctl status docker
-sudo usermod -aG docker ${USER}
-su - ${USER}
-id -nG
-docker info
 
 echo -e "\e[32;7m CONFIG TERMINAL \e[0m"
 
@@ -127,4 +126,22 @@ sudo apt update && sudo apt dist-upgrade -y
 flatpak update
 sudo apt autoclean
 sudo apt autoremove -y
-# ---------------------------------------------------------------------- #
+
+# --------------------------- DOCKER ----------------------------- #
+
+echo -e "\e[32;7m DOCKER INSTALL \e[0m"
+sudo apt-get remove docker docker-engine docker.io containerd runc -y
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+sudo systemctl enable docker
+docker info
+sudo shutdown -r 0
