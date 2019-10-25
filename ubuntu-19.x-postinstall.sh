@@ -105,7 +105,8 @@ sudo apt install gnome-shell-extensions -y
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 
 # Gnome Shell Extension - Sound Input & Output Device Chooser
-git clone "$SOUND_IO_EXT_REPO"     -P "$DIRETORIO_DOWNLOADS" && cd $_
+git clone "$SOUND_IO_EXT_REPO" $DIRETORIO_DOWNLOADS/gse-sound-output-device-chooser
+cd $DIRETORIO_DOWNLOADS
 cp --recursive gse-sound-output-device-chooser/sound-output-device-chooser@kgshank.net $HOME/.local/share/gnome-shell/extensions/sound-output-device-chooser@kgshank.net
 
 # Gnome Shell Extension - Multiple Monitor Panels
