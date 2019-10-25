@@ -19,6 +19,7 @@ DIRETORIO_DOWNLOADS="$HOME/Downloads/software"
 # ---------------------------------------------------------------------- #
 
 # ----------------------------- REQUISITOS ----------------------------- #
+echo -e "\e[32;7m Exec Remove \e[0m"
 ## Removendo travas eventuais do apt ##
 sudo rm /var/lib/dpkg/lock-frontend
 sudo rm /var/cache/apt/archives/lock
@@ -28,6 +29,8 @@ sudo dpkg --add-architecture i386
 
 ## Atualizando o repositório ##
 sudo apt update -y
+
+echo -e "\e[32;7m ADDING THIRD PART REPOS \e[0m"
 
 ## Adicionando repositórios de terceiros e suporte a Snap (Driver Logitech, Lutris e Drivers Nvidia)##
 sudo apt-add-repository "$PPA_LIBRATBAG" -y
@@ -44,31 +47,33 @@ sudo apt install snapd -y
 ## Atualizando o repositório depois da adição de novos repositórios ##
 sudo apt update -y
 
+echo -e "\e[32;7m LAMP STACK INSTALL \e[0m"
+
 # ----------------------------- LAMP STACK ----------------------------- #
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
-sudo apt-get install apache2
-sudo apt-get install php libapache2-mod-php
-sudo echo "<?php phpinfo();" >> /var/www/html/info.php
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+sudo apt-get install apache2 -y
+sudo apt-get install php libapache2-mod-php -y
+sudo echo "<?php phpinfo();" > $DIRETORIO_DOWNLOADS/info.php
+sudo mv $DIRETORIO_DOWNLOADS/info.php /var/www/html/info.php
 sudo systemctl restart apache2
-curl -X GET http://localhost:80/info.php
-sudo apt-get remove docker docker-engine docker.io
-curl -fsSL "$DOCKER_REPO/gpg" | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] $DOCKER_REPO $(lsb_release -cs)  stable"
-sudo apt update
-apt-cache policy docker-ce
-sudo apt install docker-ce
+curl -X GET http://localhost/info.php
+sudo apt-get remove docker docker-engine docker.io -y
+sudo apt install docker.io
 sudo systemctl status docker
 sudo usermod -aG docker ${USER}
 su - ${USER}
 id -nG
 docker info
 
+echo -e "\e[32;7m CONFIG TERMINAL \e[0m"
+
 # ----------------------------- CONFIG TERMINAL ----------------------------- #
-sudo apt-get install zsh
-sudo apt-get install git-core
+sudo apt-get install zsh -y
+sudo apt-get install git-core -y
 wget "$ZSH_REPO" -O - | zsh
 chsh -s `which zsh`
-sudo apt-get install dconf-cli
+sed -i '1i exec zsh' ~/.bashrc
+sudo apt-get install dconf-cli -y
 mkdir "$DIRETORIO_DOWNLOADS"
 git clone "$DRACULA_TERM_REPO"     -P "$DIRETORIO_DOWNLOADS"
 cd $_ && cd gnome-terminal-colors-dracula && ./install.sh
@@ -83,7 +88,7 @@ wget -c "$URL_INSYNC"              -P "$DIRETORIO_DOWNLOADS"
 sudo dpkg -i $DIRETORIO_DOWNLOADS/*.deb
 
 ## Programas do repositório APT##
-sudo apt install gnome-tweak-tool
+sudo apt install gnome-tweak-tool -y
 sudo apt install winff -y
 sudo apt install guvcview -y
 sudo apt install virtualbox -y
@@ -95,7 +100,7 @@ sudo apt install piper -y
 sudo apt install lutris libvulkan1 libvulkan1:i386 -y
 sudo apt install --install-recommends winehq-stable wine-stable wine-stable-i386 wine-stable-amd64 -y
 sudo apt install libgnutls30:i386 libldap-2.4-2:i386 libgpg-error0:i386 libxml2:i386 libasound2-plugins:i386 libsdl2-2.0-0:i386 libfreetype6:i386 libdbus-1-3:i386 libsqlite3-0:i386 -y
-sudo apt install gnome-shell-extensions
+sudo apt install gnome-shell-extensions -y
 
 # Enable minimize to click in Ubuntu
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
